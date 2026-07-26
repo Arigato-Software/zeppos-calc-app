@@ -1,12 +1,12 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 22801,
-    "appName": "Calculator",
+    "appId": 1069398,
+    "appName": "EasyCalc",
     "appType": "app",
     "version": {
       "code": 1,
-      "name": "1.0.4"
+      "name": "1.0.6"
     },
     "icon": "icon.png",
     "vender": "Arigato Software",
@@ -28,7 +28,8 @@
       "module": {
         "page": {
           "pages": [
-            "page/index"
+            "page/index",
+						"page/settings"
           ]
         }
       },
@@ -49,7 +50,7 @@
       "appName": "Калькулятор"
     },
     "en-US": {
-      "appName": "Calculator"
+      "appName": "EasyCalc"
     }
   },
   "defaultLanguage": "en-US"

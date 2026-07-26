@@ -1,7 +1,7 @@
 import { getText } from '@zos/i18n'
 import { createWidget, widget, prop, getTextLayout } from '@zos/ui'
 import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_SHORTCUT, KEY_EVENT_CLICK, onDigitalCrown, KEY_HOME } from '@zos/interaction'
-import { Vibrator, VIBRATOR_SCENE_SHORT_STRONG } from '@zos/sensor'
+import { Vibrator } from '@zos/sensor'
 import { LocalStorage } from '@zos/storage'
 import { Scrolling, SCROLL_MODE_HORIZONTAL } from '../libs/scrolling'
 
@@ -31,6 +31,7 @@ export class UI {
             memory: '',
             input_error: false,
             memory_error: false,
+            vibra: true,
             ...storage
         }
         calc.expression = this.storage.expression;
@@ -194,8 +195,10 @@ export class UI {
     }
 
     vibration() {
-        this.vibrator.setMode(VIBRATOR_SCENE_SHORT_STRONG);
-        this.vibrator.start();
+        if ( this.storage.vibra ){
+            const types = this.vibrator.getType();
+            this.vibrator.start([{type: types.CONTINUOUS, duration: 20}]);
+        }
     }
 
 }

@@ -1,5 +1,11 @@
-msgid "help"
-msgstr "Calculator v1.0.4\n© Arigato Software\n2024"
+msgid "settings"
+msgstr "Settings"
+
+msgid "vibra"
+msgstr "Vibrating buttons"
+
+msgid "about"
+msgstr "About"
 
 msgid "memory"
 msgstr "M"

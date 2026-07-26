@@ -3,6 +3,7 @@ import { px } from "@zos/utils"
 import { align } from '@zos/ui'
 import { exit } from '@zos/router'
 import { showToast } from '@zos/interaction'
+import * as Router from '@zos/router'
 
 const globalData = getApp()._options.globalData;
 const calc = globalData.calc;
@@ -164,9 +165,9 @@ export const params = {
       ],
       [
         {
-          text: '?',
+          text: '⚙️',
           color: 0x404040,
-          click: () => showToast({ content: getText("help") }),
+          click: () => Router.push({ url: 'page/settings' }),
         },
 
         {

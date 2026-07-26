@@ -164,9 +164,9 @@ export const params = {
       ],
       [
         {
-          text: '?',
+          text: '⚙️',
           color: 0x404040,
-          click: () => showToast({ content: getText("help") }),
+          click: () => Router.push({ url: 'page/settings' }),
         },
 
         {
