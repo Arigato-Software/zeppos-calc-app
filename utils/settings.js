@@ -66,8 +66,8 @@ export default class SettingsScene {
 
         this.settings.addAbout({
             title: getText('about'),
-            text: `\n${name} v${version}\n` +
-                  `${vender}, 2024-2026.`,
+            text: `\n${name}\nv${version}\n` +
+                  `${vender},\n2024-2026.`,
         });
     }
 
