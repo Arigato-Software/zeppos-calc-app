@@ -10,7 +10,7 @@ Page({
     const localStorage = new LocalStorage();
     const storage = JSON.parse(localStorage.getItem('calc', '{}'));
     config = {
-        vibra: true,
+        button_feedback: 1,
         ...storage
     }
     this.scene = new SettingsScene(params, config);

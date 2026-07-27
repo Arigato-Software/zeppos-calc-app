@@ -1,7 +1,7 @@
 import { getText } from '@zos/i18n'
 import { createWidget, widget, prop, getTextLayout } from '@zos/ui'
 import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_SHORTCUT, KEY_EVENT_CLICK, onDigitalCrown, KEY_HOME } from '@zos/interaction'
-import { Vibrator } from '@zos/sensor'
+import { Vibrator, Buzzer } from '@zos/sensor'
 import { LocalStorage } from '@zos/storage'
 import { Scrolling, SCROLL_MODE_HORIZONTAL } from '../libs/scrolling'
 
@@ -14,6 +14,12 @@ export class UI {
         this.params = params;
         this.interval = null;
         this.vibrator = new Vibrator();
+        this.buzzer = null;
+        try {
+            this.buzzer = new Buzzer();
+        } catch (e) {
+            console.log('Buzzer init failed (simulator/device limitation)');
+        }
         this.load();
         this.keyboardShow();
         this.displayShow();
@@ -31,7 +37,7 @@ export class UI {
             memory: '',
             input_error: false,
             memory_error: false,
-            vibra: true,
+            button_feedback: 1,
             ...storage
         }
         calc.expression = this.storage.expression;
@@ -80,8 +86,8 @@ export class UI {
         this.showText(this.memory, calc.memory, this.params.display.memory);
         const text = calc.memory !== "" ? getText("memory") : "";
         this.hint.setProperty(prop.TEXT, text);
-        this.edit.setProperty(prop.MORE, {color: calc.input_error ? this.params.display.error : this.params.display.edit.style.color});
-        this.memory.setProperty(prop.MORE, {color: calc.memory_error ? this.params.display.error : this.params.display.memory.style.color});
+        this.edit.setProperty(prop.MORE, { color: calc.input_error ? this.params.display.error : this.params.display.edit.style.color });
+        this.memory.setProperty(prop.MORE, { color: calc.memory_error ? this.params.display.error : this.params.display.memory.style.color });
     }
 
     displayShow() {
@@ -163,19 +169,25 @@ export class UI {
                     } else {
                         w *= key.cols ?? 1;
                         const h = this.params.keyboard.s * (key.rows ?? 1);
-                        const button = scrolling.container.createWidget(widget.BUTTON, {
+                        const param = {
                             x: x + 2,
                             y: y + 2,
                             w: w - 4,
                             h: h - 4,
-                            normal_color: key.color,
-                            press_color: key.color + 0x404040,
-                            text_size: key.text_size ?? this.params.keyboard.text_size,
-                            radius: this.params.keyboard.radius,
-                            text: key.text,
                             click_func: () => this.click(key.click ?? null),
                             longpress_func: () => this.click(key.longpress ?? null),
-                        });
+                        };
+                        if (key.src) {
+                            param.normal_src = `${key.src}_normal.png`;
+                            param.press_src = `${key.src}_press.png`;
+                        } else {
+                            param.radius = this.params.keyboard.radius;
+                            param.normal_color = key.color;
+                            param.press_color = key.color + 0x404040;
+                            param.text_size = key.text_size ?? this.params.keyboard.text_size;
+                            param.text = key.text;
+                        }
+                        const button = scrolling.container.createWidget(widget.BUTTON, param);
                         scrolling.setScrolling(button);
                     }
                 }
@@ -187,17 +199,30 @@ export class UI {
     }
 
     click(callback) {
-        this.vibration();
+        this.buttonFeedback();
         if (callback) {
             callback();
             this.showEdit();
         }
     }
 
-    vibration() {
-        if ( this.storage.vibra ){
-            const types = this.vibrator.getType();
-            this.vibrator.start([{type: types.CONTINUOUS, duration: 20}]);
+    buttonFeedback() {
+        switch (this.storage.button_feedback) {
+            case 1:
+                const types = this.vibrator.getType();
+                this.vibrator.start([{ type: types.CONTINUOUS, duration: 20 }]);
+                break;
+            case 2:
+                this.vibrator.start({ mode: 17 });
+                break;
+            case 3:
+                if (this.buzzer) {
+                    const alarmType = this.buzzer.getSourceType()['REMIND_2'];
+                    if (this.buzzer.isEnabled()) {
+                        this.buzzer.start(alarmType);
+                    }
+                }
+                break;
         }
     }
 

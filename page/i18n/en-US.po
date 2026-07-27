@@ -1,10 +1,28 @@
 msgid "settings"
 msgstr "Settings"
 
-msgid "vibra"
-msgstr "Vibrating buttons"
+msgid "buttonFeedback"
+msgstr "Button Feedback"
 
-msgid "about"
+msgid "bf_none"
+msgstr "None"
+
+msgid "bf_vibration"
+msgstr "Vibration"
+
+msgid "bf_tap"
+msgstr "Tap"
+
+msgid "bf_beep"
+msgstr "Beep"
+
+msgid "reset_title"
+msgstr "Reset Settings"
+
+msgid "reset_text"
+msgstr "Calculator settings will be reset to default"
+
+msgid "about_title"
 msgstr "About"
 
 msgid "memory"

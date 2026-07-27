@@ -206,12 +206,8 @@ export class Settings {
                 const { type } = keyObj
                 if (type === Interaction.MODAL_CONFIRM) {
                     param?.ok_func?.();
-                    dialog.show(false);
-                    this.goHome();
-                } else {
-                    Router.back();
                 }
-                this.keyControl = true;
+                Router.back();
             },
         });
         this.keyControl = false;

@@ -165,7 +165,7 @@ export const params = {
       ],
       [
         {
-          text: '⚙️',
+          src: 'settings',
           color: 0x404040,
           click: () => Router.push({ url: 'page/settings' }),
         },

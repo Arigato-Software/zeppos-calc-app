@@ -1,10 +1,28 @@
 msgid "settings"
 msgstr "Настройки"
 
-msgid "vibra"
-msgstr "Вибро кнопок"
+msgid "buttonFeedback"
+msgstr "Отклик кнопок"
 
-msgid "about"
+msgid "bf_none"
+msgstr "Нет"
+
+msgid "bf_vibration"
+msgstr "Вибрация"
+
+msgid "bf_tap"
+msgstr "Стук"
+
+msgid "bf_beep"
+msgstr "Пищалка"
+
+msgid "reset_title"
+msgstr "Сброс настроек"
+
+msgid "reset_text"
+msgstr "Настройки калькулятора будут сброшены на первоначальные"
+
+msgid "about_title"
 msgstr "О программе"
 
 msgid "memory"
