@@ -2,6 +2,9 @@ import { getText } from '@zos/i18n'
 
 export class Calc {
     constructor() {
+        this.config = {
+            angle_mode: 0, // 0 - DEG, 1 - RAD, 2 - GRAD
+        };
         this.expression = ""; // Строка для отображения выражения
         this.result = "";     // Строка для отображения результата
         this.currentInput = "0"; // Текущее вводимое число
@@ -17,7 +20,7 @@ export class Calc {
             // Удаляем все незначимые нули в конце дробной части
             numberString = numberString.replace(/\.?0+$/, "");
             if (numberString.endsWith(".")) numberString = numberString.slice(0, -1);
-            if (parseFloat(numberString) == 0) value = "0";
+            if (parseFloat(numberString) == 0) numberString = "0";
         }
         if (numberString === "-0") numberString = "0";
         return numberString;
@@ -33,12 +36,24 @@ export class Calc {
             return getText('overflow');
         }
 
-        // Округляем результат до 14 значащих цифр
+        // Исправляем погрешности близкие к целым числам
+        const rounded = Math.round(value);
+        if (Math.abs(value - rounded) < 1e-10) {
+            value = rounded;
+        }
+
+        // Если пользователь задал конкретную точность (знаков после запятой)
+        if (this.config.precision > -1) {
+            value = parseFloat(value.toFixed(this.config.precision));
+        }
+
+        // Округляем результат до заданной точности
+        const prec = 14;
         if (value.toString().indexOf('e') > -1) {
-            value = this.trimTrailingZeros(value.toFixed(13));
-        } else if (Math.abs(value).toString().length > 15) {
-            value = this.trimTrailingZeros(value.toPrecision(14));
-            if (Math.abs(value).toString().length == 15) {
+            value = this.trimTrailingZeros(value.toFixed(prec - 1));
+        } else if (Math.abs(value).toString().length > prec + 1) {
+            value = this.trimTrailingZeros(value.toPrecision(prec));
+            if (Math.abs(value).toString().length == prec + 1) {
                 value = value.toString();
                 // Исправляем неточность вычислений
                 if (value.endsWith("01") || value.endsWith("02")) {
@@ -75,11 +90,32 @@ export class Calc {
         this.expression += value;
     }
 
+    toRadians(value) {
+        switch (this.config.angle_mode) {
+            case 1: return value; // RAD
+            case 2: return value * (Math.PI / 200); // GRAD
+            default: return value * (Math.PI / 180); // DEG
+        }
+    }
+
+    fromRadians(value) {
+        switch (this.config.angle_mode) {
+            case 1: return value; // RAD
+            case 2: return value * (200 / Math.PI); // GRAD
+            default: return value * (180 / Math.PI); // DEG
+        }
+    }
+
+    cleanResult(value) {
+        if (Math.abs(value) < 1e-10) return 0;
+        return value;
+    }
+
     // Метод MR (Memory Recall) — выводит значение из памяти в currentInput
     memoryRecall() {
         if (this.memory && !isNaN(this.memory) && !this.input_error && !this.memory_error) {
             if (this.result) this.clear();
-            this.replaceValue(this.memory);
+            this.replaceValue(this.getStringValue(parseFloat(this.memory)));
             this.replacement = true;
         }
     }
@@ -154,24 +190,26 @@ export class Calc {
     }
 
     toggleSign() {
-        if (this.input_error) return;
-        if (this.result) {
-            if (isNaN(this.result)) return;
+        if (isNaN(this.currentInput) || isNaN(this.result) || this.input_error) return;
+        if (this.replacement && this.expression.endsWith(" ")) {
+            this.replaceValue("-0");
+            this.replacement = false;
+            return;
+        }
+        if (this.result && this.expression.endsWith("=")) {
             this.result = this.result.startsWith("-")
                 ? this.result.slice(1)
                 : "-" + this.result;
             return;
         }
-        if (this.currentInput) {
-            if (isNaN(this.currentInput)) return;
-            // Меняем знак текущего числа
-            this.currentInput = this.currentInput.startsWith("-")
-                ? this.currentInput.slice(1)
-                : "-" + this.currentInput;
+        if (this.result) this.clear();
+        // Меняем знак текущего числа
+        this.currentInput = this.currentInput.startsWith("-")
+            ? this.currentInput.slice(1)
+            : "-" + this.currentInput;
 
-            // Обновляем выражение
-            this.replaceValue(this.currentInput);
-        }
+        // Обновляем выражение
+        this.replaceValue(this.currentInput);
     }
 
     enterOperation(operation) {
@@ -202,17 +240,17 @@ export class Calc {
     sqrt() {
         const value = this.getCurrentInput();
         if (value === "") return;
-        let sqrtValue;
+        let res;
         if (value >= 0) {
-            sqrtValue = this.getStringValue(Math.sqrt(value));
+            res = this.getStringValue(Math.sqrt(value));
         } else {
             this.input_error = true;
-            sqrtValue = getText("error");
+            res = getText("error");
         }
         if (this.currentInput) {
-            this.replaceValue(sqrtValue);
+            this.replaceValue(res);
         } else {
-            this.result = sqrtValue;
+            this.result = res;
         }
         this.replacement = true;
     }
@@ -220,11 +258,300 @@ export class Calc {
     sqr() {
         const value = this.getCurrentInput();
         if (value === "") return;
-        const sqrValue = this.getStringValue(value * value);
+        const res = this.getStringValue(value * value);
         if (this.currentInput) {
-            this.replaceValue(sqrValue);
+            this.replaceValue(res);
         } else {
-            this.result = sqrValue;
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    exp() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(Math.exp(value));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    ln() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (value > 0) {
+            res = this.getStringValue(Math.log(value));
+        } else {
+            this.input_error = true;
+            res = getText("error");
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    e() {
+        if (!this.input_error) {
+            if (this.result) this.clear();
+            const res = this.getStringValue(Math.E);
+            this.replaceValue(res);
+            this.replacement = true;
+        }
+    }
+
+    cbrt() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(Math.cbrt(value));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    cube() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(value * value * value);
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    ten() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(Math.pow(10, value));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    log() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (value > 0) {
+            res = this.getStringValue(Math.log10(value));
+        } else {
+            this.input_error = true;
+            res = getText("error");
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    pi() {
+        if (!this.input_error) {
+            if (this.result) this.clear();
+            const res = this.getStringValue(Math.PI);
+            this.replaceValue(res);
+            this.replacement = true;
+        }
+    }
+
+    fact() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (Number.isInteger(value) && value >= 0) {
+            if (value > 170) {
+                this.input_error = true;
+                res = getText('overflow');
+            } else {
+
+                res = 1;
+                for (let i = 2; i <= value; i++) {
+                    res *= i;
+                }
+                res = this.getStringValue(res);
+            }
+        } else {
+            this.input_error = true;
+            res = getText("error");
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    rnd() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (value != 0) {
+            const sign = Math.sign(value);
+            const absValue = Math.abs(value);
+            if (Number.isInteger(value)) {
+                // Целое число: случайное целое от 0 до value-1
+                res = sign * Math.floor(Math.random() * absValue);
+            } else {
+                // Дробное число: случайное дробное от 0 до value
+                res = sign * Math.random() * absValue;
+            }
+        } else res = 0;
+        res = this.getStringValue(res);
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    sin() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(this.cleanResult(Math.sin(this.toRadians(value))));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    asin() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (value >= -1 && value <= 1) {
+            res = this.getStringValue(this.fromRadians(Math.asin(value)));
+        } else {
+            this.input_error = true;
+            res = getText("error");
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    tan() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        const radians = this.toRadians(value);
+        // Проверка: тангенс не определен при cos(x) ≈ 0 (±90°, ±270° и т.д.)
+        if (parseFloat(this.getStringValue(Math.abs(Math.cos(radians)))) < 1e-10) {
+            this.input_error = true;
+            res = getText("error");
+        } else {
+            res = this.getStringValue(this.cleanResult(Math.tan(radians)));
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    atan() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(this.fromRadians(Math.atan(value)));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    round() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(Math.sign(value) * Math.round(Math.abs(value)));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    cos() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(this.cleanResult(Math.cos(this.toRadians(value))));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    acos() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        if (value >= -1 && value <= 1) {
+            res = this.getStringValue(this.fromRadians(Math.acos(value)));
+        } else {
+            this.input_error = true;
+            res = getText("error");
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    ctan() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        let res;
+        const radians = this.toRadians(value);
+        if (parseFloat(this.getStringValue(Math.abs(Math.sin(radians)))) < 1e-10) {
+            this.input_error = true;
+            res = getText("error");
+        } else {
+            res = this.getStringValue(this.cleanResult(1 / Math.tan(radians)));
+        }
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
+        }
+        this.replacement = true;
+    }
+
+    actan() {
+        const value = this.getCurrentInput();
+        if (value === "") return;
+        const res = this.getStringValue(this.fromRadians(Math.PI / 2 - Math.atan(value)));
+        if (this.currentInput) {
+            this.replaceValue(res);
+        } else {
+            this.result = res;
         }
         this.replacement = true;
     }

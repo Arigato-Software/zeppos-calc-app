@@ -1,6 +1,15 @@
 msgid "settings"
 msgstr "Настройки"
 
+msgid "trigonometry"
+msgstr "Тригонометрия"
+
+msgid "precision"
+msgstr "Точность"
+
+msgid "precision_max"
+msgstr "Максимальная"
+
 msgid "buttonFeedback"
 msgstr "Отклик кнопок"
 
@@ -24,6 +33,27 @@ msgstr "Настройки калькулятора будут сброшены 
 
 msgid "about_title"
 msgstr "О программе"
+
+msgid "deg"
+msgstr "Градусы"
+
+msgid "rad"
+msgstr "Радианы"
+
+msgid "grad"
+msgstr "Грады"
+
+msgid "tan"
+msgstr "tg"
+
+msgid "atan"
+msgstr "atg"
+
+msgid "ctan"
+msgstr "ctg"
+
+msgid "actan"
+msgstr "actg"
 
 msgid "memory"
 msgstr "M"

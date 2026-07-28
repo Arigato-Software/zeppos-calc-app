@@ -38,11 +38,15 @@ export class UI {
             input_error: false,
             memory_error: false,
             button_feedback: 1,
+            angle_mode: 1, // 0 - DEG, 1 - RAD, 2 - GRAD
+            precision: -1,  // -1 - авто/макс, или 0, 1, 2, 3... (количество знаков)
             ...storage
-        }
+        };
+        calc.config = this.storage;
         calc.expression = this.storage.expression;
         calc.result = this.storage.result;
-        calc.currentInput = this.storage.currentInput;
+        const val = this.storage.currentInput;
+        calc.currentInput = val.trim() !== "" && !isNaN(Number(val)) && Number(val) != 0 ? calc.getStringValue(parseFloat(val)) : val;
         calc.replacement = this.storage.replacement;
         calc.memory = this.storage.memory;
         calc.input_error = this.storage.input_error;

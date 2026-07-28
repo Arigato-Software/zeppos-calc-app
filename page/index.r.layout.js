@@ -147,21 +147,62 @@ export const params = {
         },
 
         {
-          text: '+',
+          text: '÷',
           color: 0x606060,
-          click: () => calc.enterOperation("+"),
+          click: () => calc.enterOperation("/"),
         },
         {
-          text: '√',
+          text: 'mod',
           color: 0x606060,
-          click: () => calc.sqrt(),
+          text_size: px(23),
+          click: () => calc.enterOperation("%"),
+        },
+        
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'ₓʸ',
+          color: 0x606060,
+          click: () => calc.enterOperation("^"),
         },
         {
           text: '1/x',
           color: 0x606060,
-          text_size: px(28),
+          text_size: px(23),
           click: () => calc.reciprocal(),
         },
+        {
+          text: 'log',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.log(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'sin',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.sin(),
+        },
+        {
+          text: 'asin',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.asin(),
+        },
+        {
+          text: 'π',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.pi(),
+        },
+
       ],
       [
         {
@@ -210,20 +251,58 @@ export const params = {
         },
 
         {
-          text: '-',
+          text: '×',
           color: 0x606060,
-          click: () => calc.enterOperation("-"),
+          click: () => calc.enterOperation("*"),
         },
         {
           text: '%',
           color: 0x606060,
           click: () => calc.percent(),
         },
+
         {
-          text: 'mod',
+          indent: 1,
+        },
+
+        {
+          text: 'ₓ²',
           color: 0x606060,
-          text_size: px(28),
-          click: () => calc.enterOperation("%"),
+          click: () => calc.sqr(),
+        },
+
+        {
+          text: '√',
+          color: 0x606060,
+          click: () => calc.sqrt(),
+        },
+        {
+          text: '₁₀ˣ',
+          color: 0x606060,
+          click: () => calc.ten(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'cos',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.cos(),
+        },
+        {
+          text: 'acos',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.acos(),
+        },
+        {
+          text: 'n!',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.fact(),
         },
       ],
       [
@@ -269,9 +348,9 @@ export const params = {
         },
 
         {
-          text: '×',
+          text: '-',
           color: 0x606060,
-          click: () => calc.enterOperation("*"),
+          click: () => calc.enterOperation("-"),
         },
         {
           text: '=',
@@ -279,10 +358,49 @@ export const params = {
           color: 0x006000,
           click: () => calc.calculate(),
         },
+
         {
-          text: 'ₓʸ',
+          indent: 1,
+        },
+
+        {
+          text: 'ₓ³',
           color: 0x606060,
-          click: () => calc.enterOperation("^"),
+          click: () => calc.cube(),
+        },
+        {
+          text: '³√',
+          color: 0x606060,
+          click: () => calc.cbrt(),
+        },
+        {
+          text: 'ln',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.ln(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: getText('tan'),
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.tan(),
+        },
+        {
+          text: getText('atan'),
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.atan(),
+        },
+        {
+          text: 'round',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.round(),
         },
 
       ],
@@ -325,12 +443,51 @@ export const params = {
         },
 
         {
-          text: '÷',
+          text: '+',
           color: 0x606060,
-          click: () => calc.enterOperation("/"),
+          click: () => calc.enterOperation("+"),
         },
         null,
-        null,
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'rnd',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.rnd(),
+        },
+        {
+          text: 'e',
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.e(),
+        },
+        {
+          text: 'ₑˣ',
+          color: 0x606060,
+          click: () => calc.exp(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: getText('ctan'),
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.ctan(),
+        },
+        {
+          text: getText('actan'),
+          color: 0x606060,
+          text_size: px(23),
+          click: () => calc.actan(),
+        },
+
       ],
 
     ],

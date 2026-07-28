@@ -9,10 +9,12 @@ Page({
     setWakeUpRelaunch({ relaunch: true }); // Чтобы страница не закрывалась когда потухнет экран
     const localStorage = new LocalStorage();
     const storage = JSON.parse(localStorage.getItem('calc', '{}'));
-    config = {
+    const config = {
         button_feedback: 1,
+        angle_mode: 1, // 0 - DEG, 1 - RAD, 2 - GRAD
+        precision: -1,  // -1 - авто/макс, или 0, 1, 2, 3... (количество знаков)
         ...storage
-    }
+    };
     this.scene = new SettingsScene(params, config);
   },
 

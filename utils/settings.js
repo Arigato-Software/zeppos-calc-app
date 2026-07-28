@@ -24,6 +24,12 @@ export default class SettingsScene {
         this.settings.scrollBar();
 
         switch (this.page) {
+            case 'trigonometry':
+                this.pageTrigonometry();
+                break;
+            case 'precision':
+                this.pagePrecision();
+                break;
             case 'buttonFeedback':
                 this.pageButtonFeedback();
                 break;
@@ -51,6 +57,16 @@ export default class SettingsScene {
         this.settings.title({ text: getText('settings') });
 
         this.settings.addLink({
+            text: getText('trigonometry'),
+            click_func: () => {this.settings.openPage('trigonometry')},
+        });
+
+        this.settings.addLink({
+            text: getText('precision'),
+            click_func: () => {this.settings.openPage('precision')},
+        });
+
+        this.settings.addLink({
             text: getText('buttonFeedback'),
             click_func: () => { this.settings.openPage('buttonFeedback') },
         });
@@ -65,17 +81,61 @@ export default class SettingsScene {
         });
     }
 
+    pageTrigonometry() {
+        this.settings.title({ text: getText('trigonometry') });
+
+        const items = [
+            getText('deg'),
+            getText('rad'),
+            getText('grad'),
+        ]
+
+        this.settings.addRadioGroup({
+            items,
+            init: [this.config.angle_mode],
+            click_func: (index) => {
+                this.config.angle_mode = index;
+            },
+        });
+    }
+
+    pagePrecision() {
+        this.settings.title({ text: getText('precision') });
+
+        const items = [
+            getText('precision_max'),
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+        ]
+
+        const prec = this.config.precision + 1 < items.length ? this.config.precision + 1 : -1
+        this.settings.addRadioGroup({
+            items,
+            init: [prec],
+            click_func: (index) => {
+                this.config.precision = index - 1;
+            },
+        });
+    }
+
     pageButtonFeedback() {
         this.settings.title({ text: getText('buttonFeedback') });
 
         const items = [
             getText('bf_none'),
             getText('bf_vibration'),
-            getText('bf_tap'),
         ]
 
         try {
             new Buzzer();
+            items.push(getText('bf_tap'));
             items.push(getText('bf_beep'));
         } catch (e) { }
 

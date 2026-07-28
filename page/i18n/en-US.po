@@ -1,6 +1,15 @@
 msgid "settings"
 msgstr "Settings"
 
+msgid "trigonometry"
+msgstr "Trigonometry"
+
+msgid "precision"
+msgstr "Precision"
+
+msgid "precision_max"
+msgstr "Maximum"
+
 msgid "buttonFeedback"
 msgstr "Button Feedback"
 
@@ -24,6 +33,27 @@ msgstr "Calculator settings will be reset to default"
 
 msgid "about_title"
 msgstr "About"
+
+msgid "deg"
+msgstr "DEG"
+
+msgid "rad"
+msgstr "RAD"
+
+msgid "grad"
+msgstr "GRAD"
+
+msgid "tan"
+msgstr "tan"
+
+msgid "atan"
+msgstr "atan"
+
+msgid "ctan"
+msgstr "ctan"
+
+msgid "actan"
+msgstr "actan"
 
 msgid "memory"
 msgstr "M"
