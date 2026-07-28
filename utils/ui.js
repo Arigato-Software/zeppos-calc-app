@@ -44,8 +44,9 @@ export class UI {
         };
         calc.config = this.storage;
         calc.expression = this.storage.expression;
-        calc.result = this.storage.result;
-        const val = this.storage.currentInput;
+        let val = this.storage.result;
+        calc.result = val.trim() !== "" && !isNaN(Number(val)) && Number(val) != 0 ? calc.getStringValue(parseFloat(val)) : val;
+        val = this.storage.currentInput;
         calc.currentInput = val.trim() !== "" && !isNaN(Number(val)) && Number(val) != 0 ? calc.getStringValue(parseFloat(val)) : val;
         calc.replacement = this.storage.replacement;
         calc.memory = this.storage.memory;
