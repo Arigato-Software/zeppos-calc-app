@@ -1,6 +1,6 @@
 import { getText } from '@zos/i18n'
 import { createWidget, widget, prop, getTextLayout } from '@zos/ui'
-import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_SHORTCUT, KEY_EVENT_CLICK, onDigitalCrown, KEY_HOME } from '@zos/interaction'
+import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_SHORTCUT, KEY_EVENT_CLICK, KEY_EVENT_LONG_PRESS, onDigitalCrown, KEY_HOME } from '@zos/interaction'
 import { Vibrator, Buzzer } from '@zos/sensor'
 import { LocalStorage } from '@zos/storage'
 import { Scrolling, SCROLL_MODE_HORIZONTAL } from '../libs/scrolling'
@@ -134,17 +134,31 @@ export class UI {
 
         onKey({
             callback: (key, keyEvent) => {
-                if (keyEvent === KEY_EVENT_CLICK) {
-                    if (key === KEY_SELECT || key === KEY_SHORTCUT) {
-                        this.click(() => calc.calculate());
-                        return true;
-                    }
-                    if (key === KEY_UP) {
-                        this.click(() => calc.enterOperation("+"));
-                    }
-                    if (key === KEY_DOWN) {
-                        this.click(() => calc.enterOperation("-"));
-                    }
+                switch (keyEvent) {
+                    case KEY_EVENT_CLICK:
+                        if (key === KEY_SELECT || key === KEY_SHORTCUT) {
+                            this.click(() => {
+                                if (calc.input_error) {
+                                    calc.backspace();
+                                } else {
+                                    calc.calculate();
+                                }
+                            });
+                            return true;
+                        }
+                        if (key === KEY_UP) {
+                            this.click(() => calc.enterOperation("+"));
+                        }
+                        if (key === KEY_DOWN) {
+                            this.click(() => calc.enterOperation("-"));
+                        }
+                        break;
+                    case KEY_EVENT_LONG_PRESS:
+                        if (key === KEY_SELECT || key === KEY_SHORTCUT) {
+                            this.click(() => calc.clear());
+                            return true;
+                        }
+                        break;
                 }
                 return false;
             },

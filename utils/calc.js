@@ -83,11 +83,13 @@ export class Calc {
 
     replaceValue(value) {
         this.currentInput = value;
-        const lastNumberLength = this.expression.split(/\s+/).pop().length;
-        if (lastNumberLength) {
-            this.expression = this.expression.slice(0, -lastNumberLength);
+        if (!this.input_error) {
+            const lastNumberLength = this.expression.split(/\s+/).pop().length;
+            if (lastNumberLength) {
+                this.expression = this.expression.slice(0, -lastNumberLength);
+            }
+            this.expression += value;
         }
-        this.expression += value;
     }
 
     toRadians(value) {
@@ -225,7 +227,12 @@ export class Calc {
         if (this.currentInput && !this.expression.endsWith(" ")) {
             this.replaceValue(this.trimTrailingZeros(this.currentInput));
             if (["+", "-"].includes(operation)) {
-                this.currentInput = this.getStringValue(this.evaluateExpression(this.expression));
+                try {
+                    this.currentInput = this.getStringValue(this.evaluateExpression(this.expression));
+                } catch (error) {
+                    this.input_error = true;
+                    this.currentInput = getText("error");
+                }
             }
             this.expression += ` ${operation} `;
         } else if (this.expression) {
@@ -682,7 +689,11 @@ export class Calc {
 
     // Метод для стирания последней введенной цифры
     backspace() {
-        if (!this.currentInput || isNaN(this.currentInput) || this.replacement || this.currentInput === "0" || this.input_error) {
+        if (this.input_error) {
+            this.lastOperand();
+            this.replacement = false;
+            this.input_error = false;
+        } else if (!this.currentInput || isNaN(this.currentInput) || this.replacement || this.currentInput === "0") {
             this.clearLastNumber();
         } else {
             // Удаляем последнюю цифру из currentInput
