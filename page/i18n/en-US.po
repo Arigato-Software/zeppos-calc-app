@@ -44,16 +44,19 @@ msgid "grad"
 msgstr "GRAD"
 
 msgid "tan"
-msgstr "tan"
+msgstr "TAN"
 
 msgid "atan"
-msgstr "atan"
+msgstr "ATAN"
 
 msgid "ctan"
-msgstr "ctan"
+msgstr "COT"
 
 msgid "actan"
-msgstr "actan"
+msgstr "ACOT"
+
+msgid "csc"
+msgstr "CSC"
 
 msgid "memory"
 msgstr "M"

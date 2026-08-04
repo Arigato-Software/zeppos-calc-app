@@ -22,9 +22,9 @@ export const params = {
       x: px(146),
       y: px(35),
       w: px(390 - 146 * 2),
-      h: px(20),
+      h: px(18),
       color: 0xa0b0c0,
-      text_size: px(20),
+      text_size: px(18),
       align_h: align.CENTER_H,
       align_v: align.CENTER_V,
     },
@@ -50,7 +50,7 @@ export const params = {
         y: px(92),
         w: px(390 - 15 * 2),
         h: px(80),
-        radius: px(20),
+        radius: px(18),
         line_width: 1,
         color: 0x888888
       },
@@ -68,7 +68,7 @@ export const params = {
         align_v: align.CENTER_V,
       },
       size_max: px(40),
-      size_min: px(20),
+      size_min: px(18),
       w: px(390 - 24 * 2),
     },
     exp: {
@@ -94,7 +94,7 @@ export const params = {
     s: px(65),
     pos_x: -px(182),
     text_size: px(29),
-    radius: px(20),
+    radius: px(18),
     indent: px(13),
     keys: [
 
@@ -103,7 +103,10 @@ export const params = {
           text: 'OFF',
           color: 0x404040,
           text_size: px(28),
-          click: () => exit(),
+          click: (rnd_base) => {
+            calc.rnd_base = rnd_base;
+            exit();
+          },
         },
 
         {
@@ -118,7 +121,7 @@ export const params = {
         {
           text: '←',
           color: 0x000060,
-          click: () => calc.backspace(),
+          click: (rnd_base) => calc.backspace(rnd_base),
           longpress: () => calc.clearLastNumber(),
         },
 
@@ -147,14 +150,24 @@ export const params = {
         },
 
         {
+          text: '×',
+          color: 0x606060,
+          click: () => calc.enterOperation("*"),
+        },
+        {
           text: '÷',
           color: 0x606060,
           click: () => calc.enterOperation("/"),
         },
+
         {
-          text: 'mod',
+          indent: 1,
+        },
+
+        {
+          text: 'MOD',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.enterOperation("%"),
         },
 
@@ -174,9 +187,9 @@ export const params = {
           click: () => calc.reciprocal(),
         },
         {
-          text: 'log',
+          text: 'LOG',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.log(),
         },
 
@@ -185,30 +198,32 @@ export const params = {
         },
 
         {
-          text: 'sin',
+          text: 'SIN',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.sin(),
         },
         {
-          text: 'asin',
+          text: 'ASIN',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.asin(),
         },
         {
-          text: 'π',
+          text: getText('csc'),
           color: 0x606060,
-          text_size: px(23),
-          click: () => calc.pi(),
+          text_size: px(18),
+          click: () => calc.csc(),
         },
-
       ],
       [
         {
           src: 'settings',
           color: 0x404040,
-          click: () => Router.push({ url: 'page/settings' }),
+          click: (rnd_base) => {
+            calc.rnd_base = rnd_base;
+            Router.push({ url: 'page/settings' });
+          }
         },
 
         {
@@ -218,12 +233,12 @@ export const params = {
         {
           text: 'MC',
           color: 0x606060,
-          click: () => calc.memoryClear(),
+          click: (rnd_base) => calc.memoryClear(rnd_base),
         },
         {
           text: 'MS',
           color: 0x606060,
-          click: () => calc.memoryStore(),
+          click: (rnd_base) => calc.memoryStore(rnd_base),
         },
 
         {
@@ -251,10 +266,20 @@ export const params = {
         },
 
         {
-          text: '×',
+          text: '+',
           color: 0x606060,
-          click: () => calc.enterOperation("*"),
+          click: () => calc.enterOperation("+"),
         },
+        {
+          text: '-',
+          color: 0x606060,
+          click: () => calc.enterOperation("-"),
+        },
+
+        {
+          indent: 1,
+        },
+
         {
           text: '%',
           color: 0x606060,
@@ -287,22 +312,22 @@ export const params = {
         },
 
         {
-          text: 'cos',
+          text: 'COS',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.cos(),
         },
         {
-          text: 'acos',
+          text: 'ACOS',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.acos(),
         },
         {
-          text: 'n!',
+          text: 'SEC',
           color: 0x606060,
-          text_size: px(23),
-          click: () => calc.fact(),
+          text_size: px(18),
+          click: () => calc.sec(),
         },
       ],
       [
@@ -315,12 +340,12 @@ export const params = {
         {
           text: 'M-',
           color: 0x606060,
-          click: () => calc.memorySubtract(),
+          click: (rnd_base) => calc.memorySubtract(rnd_base),
         },
         {
           text: 'M+',
           color: 0x606060,
-          click: () => calc.memoryAdd(),
+          click: (rnd_base) => calc.memoryAdd(rnd_base),
         },
 
         {
@@ -348,15 +373,26 @@ export const params = {
         },
 
         {
-          text: '-',
-          color: 0x606060,
-          click: () => calc.enterOperation("-"),
-        },
-        {
           text: '=',
           rows: 2,
           color: 0x006000,
           click: () => calc.calculate(),
+        },
+        {
+          text: '(',
+          color: 0x606060,
+          click: () => calc.openBracket(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'RND',
+          color: 0x606060,
+          text_size: px(18),
+          click: (rnd_base) => calc.rnd(rnd_base),
         },
 
         {
@@ -374,9 +410,9 @@ export const params = {
           click: () => calc.cbrt(),
         },
         {
-          text: 'ln',
+          text: 'LN',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.ln(),
         },
 
@@ -387,20 +423,20 @@ export const params = {
         {
           text: getText('tan'),
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.tan(),
         },
         {
           text: getText('atan'),
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.atan(),
         },
         {
-          text: 'round',
+          text: 'π',
           color: 0x606060,
-          text_size: px(23),
-          click: () => calc.round(),
+          text_size: px(28),
+          click: () => calc.pi(),
         },
 
       ],
@@ -442,27 +478,38 @@ export const params = {
           indent: 1,
         },
 
-        {
-          text: '+',
-          color: 0x606060,
-          click: () => calc.enterOperation("+"),
-        },
         null,
+        {
+          text: ')',
+          color: 0x606060,
+          click: () => calc.closeBracket(),
+        },
 
         {
           indent: 1,
         },
 
         {
-          text: 'rnd',
+          text: 'ROUND',
           color: 0x606060,
-          text_size: px(23),
-          click: () => calc.rnd(),
+          text_size: px(18),
+          click: () => calc.round(),
+        },
+
+        {
+          indent: 1,
+        },
+
+        {
+          text: 'n!',
+          color: 0x606060,
+          text_size: px(28),
+          click: () => calc.fact(),
         },
         {
           text: 'e',
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(28),
           click: () => calc.e(),
         },
         {
@@ -478,13 +525,13 @@ export const params = {
         {
           text: getText('ctan'),
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.ctan(),
         },
         {
           text: getText('actan'),
           color: 0x606060,
-          text_size: px(23),
+          text_size: px(18),
           click: () => calc.actan(),
         },
 

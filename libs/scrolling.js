@@ -112,7 +112,7 @@ export class Scrolling {
                 if (this.scrolling) {
                     return true
                 } else {
-                    return this.params?.gesture_func(event);
+                    return this.params?.gesture_func?.(event) ?? false;
                 }
             },
         });

@@ -25,6 +25,16 @@ export class UI {
         this.displayShow();
     }
 
+    validateStorageValue(key, def = '') {
+        const value = this.storage[key];
+        if (typeof value === 'object' || value === null || Array.isArray(value)) {
+            this.storage[key] = def;
+        }
+         if (typeof value === 'number'){
+            this.storage[key] = this.storage[key].toString();
+         }
+    }
+
     load() {
         const localStorage = new LocalStorage();
         const storage = JSON.parse(localStorage.getItem('calc', '{}'));
@@ -34,6 +44,7 @@ export class UI {
             result: '',
             currentInput: '0',
             replacement: false,
+            rnd_base: '',
             memory: '',
             input_error: false,
             memory_error: false,
@@ -42,6 +53,11 @@ export class UI {
             precision: -1,  // -1 - авто/макс, или 0, 1, 2, 3... (количество знаков)
             ...storage
         };
+        this.validateStorageValue('currentInput', '0');
+        this.validateStorageValue('expression');
+        this.validateStorageValue('result');
+        this.validateStorageValue('rnd_base');
+        this.validateStorageValue('memory');
         calc.config = this.storage;
         calc.expression = this.storage.expression;
         let val = this.storage.result;
@@ -49,6 +65,7 @@ export class UI {
         val = this.storage.currentInput;
         calc.currentInput = val.trim() !== "" && !isNaN(Number(val)) && Number(val) != 0 ? calc.getStringValue(parseFloat(val)) : val;
         calc.replacement = this.storage.replacement;
+        calc.rnd_base = this.storage.rnd_base;
         calc.memory = this.storage.memory;
         calc.input_error = this.storage.input_error;
         calc.memory_error = this.storage.memory_error;
@@ -59,6 +76,7 @@ export class UI {
         this.storage.result = calc.result;
         this.storage.currentInput = calc.currentInput;
         this.storage.replacement = calc.replacement;
+        this.storage.rnd_base = calc.rnd_base;
         this.storage.memory = calc.memory;
         this.storage.input_error = calc.input_error;
         this.storage.memory_error = calc.memory_error;
@@ -82,7 +100,11 @@ export class UI {
     }
 
     formatExpression(expression) {
-        return expression.replace(/\*/g, "×").replace(/\//g, "÷").replace(/%/g, "mod");
+        let exp = expression.replace(/\*/g, "×").replace(/\//g, "÷").replace(/%/g, "mod");
+        if (calc.rnd_base !== ""){
+            exp = exp.split(" ").slice(0, -1).join(" ") + ` rnd(${calc.rnd_base})`;
+        }
+        return exp;
     }
 
     showEdit() {
@@ -93,6 +115,16 @@ export class UI {
         this.hint.setProperty(prop.TEXT, text);
         this.edit.setProperty(prop.MORE, { color: calc.input_error ? this.params.display.error : this.params.display.edit.style.color });
         this.memory.setProperty(prop.MORE, { color: calc.memory_error ? this.params.display.error : this.params.display.memory.style.color });
+        
+        // Считаем количество открытых скобок
+        if (this.openBracketButton){
+            const openCount = (calc.expression.match(/\(/g) || []).length;
+            const closeCount = (calc.expression.match(/\)/g) || []).length;
+            const openBracket = openCount - closeCount;
+            const subscripts = ['', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+            const subscriptChar = subscripts[openBracket] ?? '';
+            this.openBracketButton.setProperty(prop.TEXT, `(${subscriptChar}`);
+        }        
     }
 
     displayShow() {
@@ -137,9 +169,9 @@ export class UI {
                 switch (keyEvent) {
                     case KEY_EVENT_CLICK:
                         if (key === KEY_SELECT || key === KEY_SHORTCUT) {
-                            this.click(() => {
+                            this.click((rnd_base) => {
                                 if (calc.input_error) {
-                                    calc.backspace();
+                                    calc.backspace(rnd_base);
                                 } else {
                                     calc.calculate();
                                 }
@@ -208,6 +240,9 @@ export class UI {
                         }
                         const button = scrolling.container.createWidget(widget.BUTTON, param);
                         scrolling.setScrolling(button);
+                        if (param.text === "("){
+                            this.openBracketButton = button;
+                        }
                     }
                 }
                 x += w;
@@ -220,7 +255,9 @@ export class UI {
     click(callback) {
         this.buttonFeedback();
         if (callback) {
-            callback();
+            const rnd_base = calc.rnd_base;
+            calc.rnd_base = "";
+            callback(rnd_base);
             this.showEdit();
         }
     }
