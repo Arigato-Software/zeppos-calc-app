@@ -13,6 +13,7 @@ Page({
         button_feedback: 1,
         angle_mode: 1, // 0 - DEG, 1 - RAD, 2 - GRAD
         precision: -1,  // -1 - авто/макс, или 0, 1, 2, 3... (количество знаков)
+        calc_mode: 0,   // 0 - обычный, 1 - инженерный
         ...storage
     };
     this.scene = new SettingsScene(params, config);

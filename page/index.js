@@ -1,5 +1,4 @@
-import { getText } from '@zos/i18n'
-import * as Styles from 'zosLoader:./index.[pf].layout.js'
+import { params } from 'zosLoader:./index.[pf].layout.js'
 import { setWakeUpRelaunch } from '@zos/display'
 import { UI } from '../utils/ui'
 
@@ -10,7 +9,7 @@ Page({
 
   build() {
 
-    this.ui = new UI(Styles.params);
+    this.ui = new UI(params);
     this.ui.load();
 
   },

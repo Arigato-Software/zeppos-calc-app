@@ -1,6 +1,15 @@
 msgid "settings"
 msgstr "Настройки"
 
+msgid "calc_mode"
+msgstr "Вид калькулятора"
+
+msgid "mode_standard"
+msgstr "Обычный"
+
+msgid "mode_scientific"
+msgstr "Инженерный"
+
 msgid "trigonometry"
 msgstr "Тригонометрия"
 

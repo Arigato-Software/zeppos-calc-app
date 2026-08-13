@@ -959,9 +959,21 @@ export class Calc {
             return;
         }
         if (this.input_error) {
-            this.lastOperand();
-            this.replacement = false;
             this.input_error = false;
+            this.replacement = false;
+            if (this.expression.trim() !== "") {
+                const tokens = this.expression.trim().split(/\s+/);
+                const lastToken = tokens[tokens.length - 1];
+                if (!isNaN(lastToken)) {
+                    this.currentInput = lastToken;
+                } else {
+                    this.currentInput = "0";
+                }
+            } else {
+                this.currentInput = "0";
+                this.expression = "";
+            }
+            return;
         } else if (!this.currentInput || isNaN(this.currentInput) || this.replacement || this.currentInput === "0") {
             this.clearLastNumber();
         } else {
@@ -978,22 +990,28 @@ export class Calc {
         if (this.expression.trim() === "") {
             this.expression = "";
         }
-        this.input_error = false;
     }
 
     // Метод для удаления последнего введенного числа целиком
     clearLastNumber() {
-        // Если число существует, удаляем его
-        if (!this.replacement && this.currentInput && this.currentInput !== "0") {
-            // Удаляем последнее число из выражения
-            const tokens = this.expression.trimEnd().split(/\s+/);
-            const lastToken = tokens.pop();
-            if (!isNaN(lastToken) || isNaN(this.currentInput) || this.input_error) {
-                this.expression = tokens.join(" ") + " ";
+        if (this.currentInput && this.currentInput !== "0") {
+            // Удаляем текущее число из конца expression
+            const currentLen = this.currentInput.length;
+            const trimmedExpr = this.expression.trimEnd();
+            
+            if (trimmedExpr.endsWith(this.currentInput)) {
+                this.expression = trimmedExpr.slice(0, -currentLen).trimEnd();
+                if (this.expression) this.expression += " ";
+            } else {
+                // Если не совпадает, используем lastOperand для отката
+                this.lastOperand();
+                this.replacement = false;
+                this.input_error = false;
+                return;
             }
-            // Очищаем currentInput
             this.currentInput = "0";
         } else {
+            // Если currentInput пустой или "0", используем lastOperand
             this.lastOperand();
         }
         this.replacement = false;

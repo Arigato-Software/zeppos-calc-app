@@ -24,6 +24,9 @@ export default class SettingsScene {
         this.settings.scrollBar();
 
         switch (this.page) {
+            case 'calc_mode':
+                this.pageCalcMode();
+                break;
             case 'trigonometry':
                 this.pageTrigonometry();
                 break;
@@ -57,13 +60,20 @@ export default class SettingsScene {
         this.settings.title({ text: getText('settings') });
 
         this.settings.addLink({
-            text: getText('trigonometry'),
-            click_func: () => {this.settings.openPage('trigonometry')},
+            text: getText('calc_mode'),
+            click_func: () => { this.settings.openPage('calc_mode') },
         });
+
+        if (this.config.calc_mode == 1) {
+            this.settings.addLink({
+                text: getText('trigonometry'),
+                click_func: () => { this.settings.openPage('trigonometry') },
+            });
+        }
 
         this.settings.addLink({
             text: getText('precision'),
-            click_func: () => {this.settings.openPage('precision')},
+            click_func: () => { this.settings.openPage('precision') },
         });
 
         this.settings.addLink({
@@ -73,11 +83,28 @@ export default class SettingsScene {
 
         this.settings.addLink({
             text: getText('reset_title'),
-            click_func: () => {this.settings.openPage('reset')},
+            click_func: () => { this.settings.openPage('reset') },
         });
 
         this.settings.addHelpButton({
             click_func: () => { this.settings.openPage('about') },
+        });
+    }
+
+    pageCalcMode() {
+        this.settings.title({ text: getText('calc_mode') });
+
+        const items = [
+            getText('mode_standard'),
+            getText('mode_scientific'),
+        ]
+
+        this.settings.addRadioGroup({
+            items,
+            init: [this.config.calc_mode],
+            click_func: (index) => {
+                this.config.calc_mode = index;
+            },
         });
     }
 
@@ -148,7 +175,7 @@ export default class SettingsScene {
         });
     }
 
-    pageReset(){
+    pageReset() {
         this.settings.showDialog({
             title: getText('reset_title'),
             text: getText('reset_text'),

@@ -21,6 +21,16 @@ export class UI {
             console.log('Buzzer init failed (simulator/device limitation)');
         }
         this.load();
+
+        // Выбор раскладки
+        switch (calc.config.calc_mode) {
+            case 0: this.params.keyboard.keys = this.params.standardKeys; break;
+            case 1: this.params.keyboard.keys = this.params.scientificKeys; break;
+            default: this.params.keyboard.keys = [];
+        }
+        delete this.params.standardKeys;
+        delete this.params.scientificKeys;
+
         this.keyboardShow();
         this.displayShow();
     }
@@ -30,9 +40,9 @@ export class UI {
         if (typeof value === 'object' || value === null || Array.isArray(value)) {
             this.storage[key] = def;
         }
-         if (typeof value === 'number'){
+        if (typeof value === 'number') {
             this.storage[key] = this.storage[key].toString();
-         }
+        }
     }
 
     load() {
@@ -51,6 +61,7 @@ export class UI {
             button_feedback: 1,
             angle_mode: 1, // 0 - DEG, 1 - RAD, 2 - GRAD
             precision: -1,  // -1 - авто/макс, или 0, 1, 2, 3... (количество знаков)
+            calc_mode: 0,   // 0 - обычный, 1 - инженерный
             ...storage
         };
         this.validateStorageValue('currentInput', '0');
@@ -101,7 +112,7 @@ export class UI {
 
     formatExpression(expression) {
         let exp = expression.replace(/\*/g, "×").replace(/\//g, "÷").replace(/%/g, "mod");
-        if (calc.rnd_base !== ""){
+        if (calc.rnd_base !== "") {
             exp = exp.split(" ").slice(0, -1).join(" ") + ` rnd(${calc.rnd_base})`;
         }
         return exp;
@@ -115,16 +126,16 @@ export class UI {
         this.hint.setProperty(prop.TEXT, text);
         this.edit.setProperty(prop.MORE, { color: calc.input_error ? this.params.display.error : this.params.display.edit.style.color });
         this.memory.setProperty(prop.MORE, { color: calc.memory_error ? this.params.display.error : this.params.display.memory.style.color });
-        
+
         // Считаем количество открытых скобок
-        if (this.openBracketButton){
+        if (this.openBracketButton) {
             const openCount = (calc.expression.match(/\(/g) || []).length;
             const closeCount = (calc.expression.match(/\)/g) || []).length;
             const openBracket = openCount - closeCount;
             const subscripts = ['', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
             const subscriptChar = subscripts[openBracket] ?? '';
             this.openBracketButton.setProperty(prop.TEXT, `(${subscriptChar}`);
-        }        
+        }
     }
 
     displayShow() {
@@ -240,7 +251,7 @@ export class UI {
                         }
                         const button = scrolling.container.createWidget(widget.BUTTON, param);
                         scrolling.setScrolling(button);
-                        if (param.text === "("){
+                        if (param.text === "(") {
                             this.openBracketButton = button;
                         }
                     }
