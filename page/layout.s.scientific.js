@@ -77,7 +77,7 @@ export const scientificKeys = [
         {
             text: 'MOD',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.enterOperation("%"),
         },
 
@@ -99,7 +99,7 @@ export const scientificKeys = [
         {
             text: 'LOG',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.log(),
         },
 
@@ -110,19 +110,19 @@ export const scientificKeys = [
         {
             text: 'SIN',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.sin(),
         },
         {
             text: 'ASIN',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.asin(),
         },
         {
             text: getText('csc'),
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.csc(),
         },
     ],
@@ -224,19 +224,19 @@ export const scientificKeys = [
         {
             text: 'COS',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.cos(),
         },
         {
             text: 'ACOS',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.acos(),
         },
         {
             text: 'SEC',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.sec(),
         },
     ],
@@ -301,7 +301,7 @@ export const scientificKeys = [
         {
             text: 'RND',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: (rnd_base) => calc.rnd(rnd_base),
         },
 
@@ -322,7 +322,7 @@ export const scientificKeys = [
         {
             text: 'LN',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.ln(),
         },
 
@@ -333,13 +333,13 @@ export const scientificKeys = [
         {
             text: getText('tan'),
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.tan(),
         },
         {
             text: getText('atan'),
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.atan(),
         },
         {
@@ -402,7 +402,7 @@ export const scientificKeys = [
         {
             text: 'ROUND',
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.round(),
         },
 
@@ -435,13 +435,13 @@ export const scientificKeys = [
         {
             text: getText('ctan'),
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.ctan(),
         },
         {
             text: getText('actan'),
             color: 0x606060,
-            text_size: px(20),
+            text_size: px(18),
             click: () => calc.actan(),
         },
 
