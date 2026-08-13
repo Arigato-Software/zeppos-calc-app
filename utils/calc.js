@@ -961,9 +961,17 @@ export class Calc {
         if (this.input_error) {
             this.input_error = false;
             this.replacement = false;
+            this.result = "";
             if (this.expression.trim() !== "") {
+                let expr = this.expression.trim();
+                // Если выражение заканчивается на "=", убираем его
+                if (expr.endsWith("=")) {
+                    expr = expr.slice(0, -1).trim();
+                    this.expression = expr;
+                }
                 const tokens = this.expression.trim().split(/\s+/);
                 const lastToken = tokens[tokens.length - 1];
+                console.log(lastToken)
                 if (!isNaN(lastToken)) {
                     this.currentInput = lastToken;
                 } else {
