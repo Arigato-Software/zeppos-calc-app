@@ -264,7 +264,7 @@ export class UI {
     }
 
     click(callback) {
-        this.buttonFeedback();
+        UI.buttonFeedback(this.vibrator, this.buzzer, this.storage.button_feedback);
         if (callback) {
             const rnd_base = calc.rnd_base;
             calc.rnd_base = "";
@@ -273,20 +273,20 @@ export class UI {
         }
     }
 
-    buttonFeedback() {
-        switch (this.storage.button_feedback) {
+    static buttonFeedback(vibrator, buzzer, type) {
+        switch (type) {
             case 1:
-                const types = this.vibrator.getType();
-                this.vibrator.start([{ type: types.CONTINUOUS, duration: 20 }]);
+                const types = vibrator.getType();
+                vibrator.start([{ type: types.CONTINUOUS, duration: 20 }]);
                 break;
             case 2:
-                this.vibrator.start({ mode: 17 });
+                vibrator.start({ mode: 17 });
                 break;
             case 3:
-                if (this.buzzer) {
-                    const alarmType = this.buzzer.getSourceType()['REMIND_2'];
-                    if (this.buzzer.isEnabled()) {
-                        this.buzzer.start(alarmType);
+                if (buzzer) {
+                    const alarmType = buzzer.getSourceType()['REMIND_2'];
+                    if (buzzer.isEnabled()) {
+                        buzzer.start(alarmType);
                     }
                 }
                 break;

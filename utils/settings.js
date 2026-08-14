@@ -1,9 +1,10 @@
 import { getText } from '@zos/i18n'
 import { getPackageInfo } from '@zos/app'
-import { Buzzer } from '@zos/sensor'
+import { Vibrator, Buzzer } from '@zos/sensor'
 
-import Layout from '../page/settings.layout.js'
+import Layout from '../page/settings.layout'
 import { Settings } from '../libs/settings'
+import { UI } from './ui'
 
 export default class SettingsScene {
 
@@ -160,8 +161,10 @@ export default class SettingsScene {
             getText('bf_vibration'),
         ]
 
+        const vibrator = new Vibrator();
+        let buzzer = null;
         try {
-            new Buzzer();
+            buzzer = new Buzzer();
             items.push(getText('bf_tap'));
             items.push(getText('bf_beep'));
         } catch (e) { }
@@ -171,6 +174,7 @@ export default class SettingsScene {
             init: [this.config.button_feedback],
             click_func: (index) => {
                 this.config.button_feedback = index;
+                UI.buttonFeedback(vibrator, buzzer, index);
             },
         });
     }

@@ -1,8 +1,8 @@
 import { px } from "@zos/utils"
 import { align } from '@zos/ui'
 
-import { standardKeys } from './layout.s.standard.js'
-import { scientificKeys } from './layout.s.scientific.js'
+import { standardKeys } from './layout.s.standard'
+import { scientificKeys } from './layout.s.scientific'
 
 export const params = {
   display: {
